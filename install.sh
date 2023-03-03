@@ -8,40 +8,34 @@ REPO_URL="https://github.com/su-haris/simple-backup-to-s3.git"
 echo "Installing simple-backup-to-s3"
 echo -e
 
-# Check if python is installed
-echo "Checking for Python Installation"
+# Install Python
 
-if command -v python3 &>/dev/null; then
-  echo "Python3 is installed."
-else
-  echo "Python3 is not installed."
-  echo "Proceeding to install Python3."
+echo "Proceeding to install Python3 and virtualenv"
 
-  # Check the distribution
-  if [ -f /etc/redhat-release ]; then
+# Check the distribution
+if [ -f /etc/redhat-release ]; then
     # Install Python3 on Redhat/CentOS
     yum install python3 -yq
-    yum install python3.11-venv -yq
-  elif [ -f /etc/lsb-release ]; then
+    yum install python3-venv -yq
+elif [ -f /etc/lsb-release ]; then
     # Install Python3 on Ubuntu/Debian
     apt-get update -q
     apt-get install python3 -yq
-    sudo apt-get install python3.11-venv -yq
-  elif [ -f /etc/os-release ]; then
+    sudo apt-get install python3-venv -yq
+elif [ -f /etc/os-release ]; then
     source /etc/os-release
     if [ "$ID" == "amzn" ]; then
-      # Install Python3 on Amazon Linux
-      yum install python3 -yq
-      yum install python3.11-venv -yq
+        # Install Python3 on Amazon Linux
+        yum install python3 -yq
+        yum install python3-venv -yq
     fi
-  else
+else
     echo "Distribution not supported."
     echo "Try to install Python3 manually and try again."
     exit 1
-  fi
-  echo "Python3 is successfully installed!"
-  echo -e
 fi
+echo "Python3 is successfully installed!"
+echo -e
 
 # Clone the repository
 echo "Cloning repository for the necessary files."
@@ -79,12 +73,11 @@ DIRECTORY_PATHS=$(echo $DIRECTORY_PATHS | sed "s/,/','/g")
 DIRECTORY_PATHS="['"$DIRECTORY_PATHS"']"
 
 # Write the values to the file
-echo "SECRET_ACCESS_KEY = '$SECRET_ACCESS_KEY'" > settings.py
-echo "ACCESS_KEY_ID = '$ACCESS_KEY_ID'" >> settings.py
-echo "ENDPOINT_URL = $ENDPOINT_URL" >> settings.py
-echo "REGION = $REGION" >> settings.py
-echo "DIRECTORY_PATHS = $DIRECTORY_PATHS" >> settings.py
-
+echo "SECRET_ACCESS_KEY = '$SECRET_ACCESS_KEY'" >settings.py
+echo "ACCESS_KEY_ID = '$ACCESS_KEY_ID'" >>settings.py
+echo "ENDPOINT_URL = '$ENDPOINT_URL'" >>settings.py
+echo "REGION = '$REGION'" >>settings.py
+echo "DIRECTORY_PATHS = $DIRECTORY_PATHS" >>settings.py
 
 # Confirm that the values have been written to the file
 echo -e
@@ -95,7 +88,7 @@ cat settings.py
 CURRENT_DIR=$(pwd)
 
 # activate virtualenv
-python3.11 -m venv env
+python3 -m venv env
 source env/bin/activate
 
 # install required packages
@@ -106,7 +99,9 @@ echo -e
 python backup_to_s3.py
 
 # Add Cron entry to run at 3AM daily.
-(crontab -l 2>/dev/null; echo "0 3 * * * cd $CURRENT_DIR && source env/bin/activate && python backup_to_s3.py") | crontab -
+(
+    crontab -l 2>/dev/null
+    echo "0 3 * * * cd $CURRENT_DIR && source env/bin/activate && python backup_to_s3.py"
+) | crontab -
 
 echo "Installation of simple-backup-to-s3 is complete."
-
