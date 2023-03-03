@@ -34,6 +34,7 @@ else
     echo "Try to install Python3 manually and try again."
     exit 1
 fi
+echo -e
 echo "Python3 is successfully installed!"
 echo -e
 
@@ -92,10 +93,13 @@ python3 -m venv env
 source env/bin/activate
 
 # install required packages
+echo -e
+echo "Installing required python packages"
 pip install -r requirements.txt
 
 # Doing a test run backup
 echo -e
+echo "Doing a test run backup. This will confirm if installation was successful."
 python backup_to_s3.py
 
 # Add Cron entry to run at 3AM daily.

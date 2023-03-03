@@ -2,6 +2,9 @@ import boto3
 import os
 import tarfile
 import settings
+import time
+
+START_TIME = time.time()
 
 HOST_NAME = os.popen("hostname").readlines()[0].replace("\n", "")
 
@@ -46,6 +49,7 @@ os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
 # Call the function to compress the directories
 compress_directories(directory_paths, output_path)
+print("Local Backup Successful")
 
 # Create s3 object
 s3 = boto3.resource(
@@ -56,5 +60,10 @@ s3 = boto3.resource(
     endpoint_url=ENDPOINT_URL,
 )
 
+print("Uploading to S3 Bucket")
 s3.meta.client.upload_file(output_path, "server-backups", output_path_bucket)
 print("Upload Success!")
+
+end_time = time.time()
+execution_time = round((end_time - START_TIME) / 60, 2)
+print("Execution time:", execution_time, "minutes")
