@@ -19,6 +19,7 @@ def compress_directories(directory_paths, output_path):
             # Get the base name of the directory
             try:
                 base_name = os.path.basename(directory_path)
+                print('Compressing ', base_name)
                 # Walk through all the files and subdirectories in the directory
                 for root, directories, files in os.walk(directory_path):
                     for file in files:
@@ -34,8 +35,10 @@ def compress_directories(directory_paths, output_path):
                 print('Exception trying to compress:', e)            
 
 # Replace these values with the actual directory paths and output path
-directory_paths = ['/root']
-output_path = f"/backups/{HOST_NAME}.tar.gz"
+print('Starting simple-backup-to-s3')
+
+directory_paths = DIRECTORY_PATHS
+output_path = f"/simple-backups/{HOST_NAME}.tar.gz"
 output_path_bucket = f"{HOST_NAME}.tar.gz"
 
 # Call the function to compress the directories
