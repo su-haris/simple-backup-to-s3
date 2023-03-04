@@ -3,8 +3,11 @@ import os
 import tarfile
 import settings
 import time
+from datetime import datetime
+
 
 START_TIME = time.time()
+TIME_ZONE = time.localtime().tm_zone
 
 HOST_NAME = os.popen("hostname").readlines()[0].replace("\n", "")
 
@@ -60,10 +63,11 @@ s3 = boto3.resource(
     endpoint_url=ENDPOINT_URL,
 )
 
-print("Uploading to S3 Bucket")
+print(f"Uploading to S3 Bucket -> {ENDPOINT_URL}")
 s3.meta.client.upload_file(output_path, "server-backups", output_path_bucket)
 print("Upload Success!")
 
 end_time = time.time()
 execution_time = round((end_time - START_TIME) / 60, 2)
 print("Execution time:", execution_time, "minutes")
+print("System Time:", datetime.now().strftime("%d/%m/%Y %H:%M:%S"), TIME_ZONE)
