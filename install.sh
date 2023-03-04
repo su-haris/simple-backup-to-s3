@@ -85,7 +85,7 @@ echo -e
 echo "Values written to settings.py"
 cat settings.py
 
-# Update /etc/profile to trigger script on SSH
+# Find current directory for cron entry
 CURRENT_DIR=$(pwd)
 
 # activate virtualenv
@@ -105,7 +105,7 @@ python backup_to_s3.py
 # Add Cron entry to run at 3AM daily.
 (
     crontab -l 2>/dev/null
-    echo "0 3 * * * cd $CURRENT_DIR && source env/bin/activate && python backup_to_s3.py"
+    echo "0 3 * * * cd $CURRENT_DIR && env/bin/python backup_to_s3.py > $CURRENT_DIR/sbs3.log"
 ) | crontab -
 
 echo "Installation of simple-backup-to-s3 is complete."
