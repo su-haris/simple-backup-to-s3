@@ -3,3 +3,4 @@ settings.py
 .venv
 env/
 venv/
+sbs3.log
